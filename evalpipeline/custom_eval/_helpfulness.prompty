@@ -1,0 +1,110 @@
+---
+name: Helpfulness Evaluator
+description: Helpfulness Evaluator to measure usefulness of answers.
+model:
+  api: chat
+  parameters:
+    temperature: 0.0
+    max_tokens: 800
+    top_p: 1.0
+    presence_penalty: 0
+    frequency_penalty: 0
+    response_format:
+      type: text
+      
+inputs:
+  query:
+    type: string
+  response:
+    type: string
+  context:
+    type: string
+
+
+---
+system:
+# Instruction  
+## Goal  
+### Du bist ein Experte darin, die Qualität einer Antwort eines intelligenten Systems basierend auf der bereitgestellten Definition und den Daten zu bewerten. Dein Ziel wird es sein, die untenstehenden Fragen mit den bereitgestellten Informationen zu beantworten.  
+- **Definition**: Dir wird eine Definition des Kommunikationsmerkmals gegeben, das bewertet wird, um deine Bewertung zu leiten. 
+- **Data**: Deine Eingabedaten umfassen die Abfrage (QUERY), den Kontext (CONTEXT) und die Antwort (RESPONSE).
+- **Tasks**: Um deine Bewertung abzuschließen, wirst du gebeten, die Daten auf verschiedene Weisen zu bewerten.
+
+user:  
+# Definition  
+**Helpfulness** bezieht sich darauf, wie gut die Antwort die Frage des Nutzers adressiert und ob sie nützlich und vollständig ist. Es wird bewertet, ob die Antwort alle Teile der Frage genau beantwortet und nützliche oder informative Inhalte liefert.
+
+# Ratings  
+## [Helpfulness: 1] (Völlig unhilfreiche Antwort)  
+**Definition:** Die Antwort ist völlig unhilfreich und geht nicht auf die Frage des Nutzers ein oder liefert nützliche Informationen.
+
+**Examples:**  
+  **Query:** Was ist ein Aktivierungscode?  
+  **Context:** Ein Aktivierungscode ist ein Code, der notwendig ist, um Ihren E-Banking-Zugang oder andere Dienste wie Mobile Banking und eBill zu aktivieren. Dieser Code besteht aus Zahlen und Kleinbuchstaben und wird verwendet, um einmalig ein Gerät Ihrer Wahl für das E-Banking oder andere Dienste freizuschalten. Nach der Verwendung verfällt der Aktivierungscode..  
+  **Response:** Die Produkte der Migros Bank erstrecken sich von Karten bis hin zu Hypotheken.  
+
+  **Query:** Wie entsperre ich mein E-Banking?  
+  **Context:** Um Ihr E-Banking zu entsperren, empfehle ich Ihnen, direkt den Kundenservice der Migros Bank zu kontaktieren. Sie erreichen die Hotline unter der Telefonnummer 0848 845 400. Die Mitarbeiter sind von Montag bis Freitag von 08:00 bis 19:00 Uhr und am Samstag von 09:00 bis 16:00 Uhr für Sie da und helfen Ihnen gerne weiter, Ihr E-Banking zu entsperren..  
+  **Response:** Die Kreditkarte hat eine individuelle Limite.  
+
+## [Helpfulness: 2] (Minimal hilfreiche Antwort)  
+**Definition:** Die Antwort ist minimal hilfreich, aber es fehlen wesentliche Informationen oder sie ist größtenteils unvollständig. 
+
+**Examples:**  
+  **Query:** Wie erhöhe ich meine Kartenlimite?  
+  **Context:** Um die Limite Ihrer Karte bei der Migros Bank zu erhöhen, können Sie dies direkt über das E-Banking tun. Loggen Sie sich in Ihr E-Banking ein und navigieren Sie zum Bereich “Karten”. Dort können Sie die Limiten Ihrer Visa Debit- oder Kreditkarte anpassen. Notieren Sie Ihre Kartennummer, die gewünschten neuen Limiten und den Gültigkeitszeitraum. Senden Sie diese Informationen über das E-Banking im Bereich „Nachrichten“ mit dem Betreff „Karten“. Die Migros Bank wird Ihre Anfrage prüfen und die Limiten entsprechend anpassen.  
+  **Response:** Das können sie über das E-Banking machen.  
+
+  **Query:** Wie eröffne ich ein neues Konto?  
+  **Context:** Um ein neues Konto bei der Migros Bank zu eröffnen, haben Sie verschiedene Möglichkeiten, je nachdem, welchen Kontotyp Sie eröffnen möchten. Hier sind einige Beispiele: Vorsorgekonto 3a: Laden Sie das Eröffnungsformular für die Vorsorgevereinbarung von der Migros Bank Website herunter und füllen Sie es aus. Senden Sie das ausgefüllte und unterschriebene Formular an die Migros Bank AG, Dienstleistungszentrum, TOKUB3E, Postfach, 8010 Zürich-Mülligen, Switzerland. Nach Erhalt und Prüfung Ihrer Unterlagen wird das Konto eröffnet und Sie erhalten eine schriftliche Bestätigung. Weitere Informationen finden Sie ​hier​. Bonus-Sparkonto (für bestehende Kunden): Loggen Sie sich in Ihr E-Banking ein. Wählen Sie im Hauptmenü „Start“ und navigieren Sie zum Bereich „Online-Produkte“. Klicken Sie unter „Konten“ auf „Eröffnen“ und wählen Sie „Bonus-Sparkonto“ aus. Bestätigen Sie mit „Weiter“ und Ihr neues Konto ist sofort aktiv. Weitere Informationen finden Sie ​hier​. Kontokorrent: Loggen Sie sich in Ihr E-Banking ein und klicken Sie auf der Startseite auf „Online abschliessen“. Wählen Sie neben „Kontokorrent“ die Option „Eröffnen“. Wählen Sie das Produkt und die Währung aus und klicken Sie auf „Weiter“. Überprüfen Sie die gewählten Attribute und schliessen Sie den Vorgang mit „Jetzt abschliessen“ ab. Sie erhalten eine Bestätigung, dass Ihr Antrag zur Eröffnung weitergeleitet wurde. Weitere Informationen finden Sie ​hier.  
+  **Response:** Ein Konto können Sie über unsere Webseite eröffnen. 
+
+## [Helpfulness: 3] (Etwas hilfreiche Antwort)  
+**Definition:** Die Antwort ist etwas hilfreich, da sie Teile der Frage anspricht, aber erhebliche Lücken lässt oder unvollständige Informationen liefert.
+
+**Examples:**  
+  **Query:** Wie erstelle ich eine Vollmacht für meinen Ehemann auf mein Konto?  
+  **Context:** Um eine Vollmacht für Ihren Ehemann auf Ihr Konto bei der Migros Bank zu erstellen, gehen Sie bitte wie folgt vor: Laden Sie das Vollmachtsformular von der Migros Bank Website herunter. Sie finden das Formular unter diesem ​Link​. Füllen Sie das Formular vollständig aus. Achten Sie darauf, alle erforderlichen Angaben zu Ihrem Ehemann und zu den gewünschten Vollmachten zu machen. Drucken Sie das ausgefüllte Formular aus und unterschreiben Sie es. Legen Sie eine Kopie des amtlichen Ausweises Ihres Ehemannes bei. Senden Sie das unterschriebene Formular zusammen mit der Ausweiskopie an die folgende Adresse: Migros Bank AG Dienstleistungszentrum, LOKUB3M Postfach 8010 Zürich Nachdem die Migros Bank Ihre Unterlagen erhalten und geprüft hat, wird die Vollmacht eingerichtet und Sie erhalten eine schriftliche Bestätigung..  
+  **Response:** Laden Sie das Vollmachtsformular von der Migros Bank Website herunter und füllen sie dieses komplett aus.  
+
+  **Query:** Wie bestelle ich eine neue Karte?  
+  **Context:** Um eine neue Karte bei der Migros Bank zu bestellen, haben Sie verschiedene Optionen, abhängig von der Art der Karte, die Sie benötigen. Hier sind einige Beispiele: Ersatzkarte für Visa Debit / Kreditkarte: Melden Sie sich in der one App an und wählen Sie das Kartensymbol oben rechts. Wählen Sie die betroffene Karte aus der Liste aus. Klicken Sie auf das Kartensymbol unten rechts und dann auf das runde Symbol «Ersetzen». Wählen Sie den Grund für die Ersatzkartenbestellung (Defekt oder Verloren/Gestohlen) und bestätigen Sie die Bestellung an die hinterlegte Adresse. Weitere Informationen finden Sie ​hier​. Neue Kreditkarte im E-Banking: Loggen Sie sich in Ihr E-Banking ein und navigieren Sie zu “Karten”. Klicken Sie auf “Neue Karte bestellen” und wählen Sie zwischen “Visa Free” und “Visa Gold”. Folgen Sie den Anweisungen bis zum Abschluss der Bestellung. Weitere Informationen finden Sie ​hier​. Prepaid-Kreditkarte “Travel”: Loggen Sie sich in Ihr E-Banking ein und wählen Sie im Menü “Karten” die Option “Prepaid”. Klicken Sie auf “Prepaidkarte bestellen” und füllen Sie das Formular aus. Bestätigen Sie mit “Karte bestellen”. Weitere Informationen finden Sie ​hier​.  
+  **Response:** Melden Sie sich über ihre App an und bestellen sie ihre Karte da. Für eine neue Kreditkarte, müssen sie sich über ihre E-Banking App einloggen und da eine neue Karte bestellen.  
+
+## [Helpfulness: 4] (Zu größtenteils hilfreiche Antwort)  
+**Definition:** Die Antwort ist überwiegend hilfreich und behandelt den Großteil der Frage, weist jedoch kleinere Auslassungen oder Ungenauigkeiten auf.
+
+**Examples:**  
+  **Query:** Wie kann ich ein LSV-Antrag stellen?  
+  **Context:** Um ein Lastschriftverfahren (LSV) bei der Migros Bank einzurichten, gehen Sie bitte wie folgt vor: Formular herunterladen: Laden Sie das LSV-Belastungsformular von der Website des Rechnungsstellers herunter. Sollte das Formular nicht verfügbar sein, kontaktieren Sie den Rechnungssteller, um es per Post zu erhalten. Formular ausfüllen: Füllen Sie das Formular mit Ihren Personalien, der IBAN Ihres Migros Bank Kontos und gegebenenfalls Ihrer Kundennummer beim Rechnungssteller aus. Drucken Sie das Formular aus, tragen Sie Ort und Datum ein und unterschreiben Sie es. Formular senden: Senden Sie das ausgefüllte und unterschriebene Originalformular an die Migros Bank AG, Dienstleistungszentrum, Postfach, 8010 Zürich. Bitte beachten Sie, dass Kopien nicht akzeptiert werden. Alternativ zum LSV können Sie auch eBill nutzen, falls vom Rechnungssteller angeboten. Weitere Informationen zum Einrichten eines Lastschriftverfahrens finden Sie auf der ​Hilfeseite der Migros Bank​..  
+  **Response:** Formular herunterladen: Laden Sie das LSV-Belastungsformular von der Website herunter. Sollte das Formular nicht verfügbar sein, kontaktieren Sie den Rechnungssteller, um es per Post zu erhalten. Formular ausfüllen: Füllen Sie das Formular aus. Drucken Sie das Formular aus, tragen Sie Ort und Datum ein und unterschreiben Sie es. Formular senden: Senden Sie das ausgefüllte und unterschriebene Originalformular an die Migros Bank. Bitte beachten Sie, dass Kopien nicht akzeptiert werden. 
+
+  **Query:** Wie bezahle ich geld an meine tochter im Ausland?  
+  **Context:** Um Geld an Ihre Tochter im Ausland zu überweisen, können Sie eine Auslandsüberweisung über das E-Banking der Migros Bank durchführen. Hier sind die Schritte, die Sie befolgen sollten: Loggen Sie sich in Ihr E-Banking ein: Wählen Sie im Menü den Punkt „Zahlungen“ und dann „Zahlung erfassen“. Erfassen Sie die Überweisungsdetails: Geben Sie die IBAN oder Kontonummer des Empfängers ein und wählen Sie „Auslandszahlung“. Füllen Sie die erforderlichen Bankdaten aus. Bei einer IBAN wird ein Fenster zur Überprüfung angezeigt, bei einer Kontonummer ohne IBAN geben Sie zusätzlich den BIC/SWIFT Code ein. Empfängerdaten eingeben: Erfassen Sie die Empfängerdaten, wählen Sie das Belastungskonto und geben Sie den Betrag in der gewünschten Währung ein. Wählen Sie die Spesenoption: Unter „Weitere Optionen“ können Sie die Spesenoption wählen. Es gibt drei Optionen für die Übernahme der Bankspesen: Bankspesen aufteilen: Sie zahlen CHF 5, weitere Spesen trägt der Empfänger. Bankspesen übernehmen: Sie zahlen CHF 25, damit alle Spesen abgedeckt sind und der volle Betrag beim Empfänger ankommt (empfohlen). Bankspesen zu Lasten des Empfängers: Die Überweisung ist für Sie kostenlos, alle Spesen trägt der Empfänger. Bestätigen Sie die Zahlung: Eventuell müssen Sie die Zahlung auf einem zweiten Gerät bestätigen, indem Sie sich in der Migros Bank Applikation einloggen und die Zahlung bestätigen. Für weitere Informationen zur Erfassung einer Auslandsüberweisung im E-Banking können Sie die ​Hilfeseite der Migros Bank​ besuchen..  
+  **Response:** Loggen Sie sich in Ihr E-Banking ein: Wählen Sie „Zahlungen“ und dann „Zahlung erfassen“. Erfassen Sie die Überweisungsdetails des Empfängers und wählen Sie „Auslandszahlung“. Füllen Sie die erforderlichen Bankdaten aus. Erfassen Sie die Empfängerdaten, wählen Sie das Belastungskonto und geben Sie den Betrag ein.  
+
+## [Helpfulness: 5] (Vollständig hilfreiche Antwort)  
+**Definition:** Die Antwort ist vollständig hilfreich, behandelt alle Aspekte der Frage genau und vollständig, ohne Auslassungen oder Ungenauigkeiten.
+
+**Examples:**  
+  **Query:** wie erfasse ich einen Dauerauftrag??  
+  **Context:** Um einen Dauerauftrag in der Migros Bank E-Banking App zu erfassen, gehen Sie bitte wie folgt vor: Navigieren Sie zum Bereich „Zahlungen“: Loggen Sie sich in Ihr E-Banking ein und wählen Sie den Bereich „Zahlungen“. Erfassen Sie den Dauerauftrag: Erfassen Sie den Dauerauftrag wie eine normale Zahlung. Im Abschnitt „Zeitplan & Weitere Optionen“ aktivieren Sie die Option „Dauerauftrag“. Legen Sie das Startdatum und die Wiederholungsregeln fest: Bestimmen Sie, wann der Dauerauftrag starten soll und wie oft die Zahlung wiederholt werden soll. Die nächsten sechs Ausführungen werden Ihnen angezeigt; bei mehr als sechs Wiederholungen läuft der Dauerauftrag dennoch weiter. Bestätigen Sie den Dauerauftrag: Bestätigen Sie den Dauerauftrag abschliessend wie eine normale Zahlung. Für weitere Informationen und eine detaillierte Anleitung können Sie die ​Hilfeseite der Migros Bank​ besuchen..  
+  **Response:** So erfassen Sie einen Dauerauftrag in der Migros Bank E-Banking App: 1.	Zum Bereich „Zahlungen“ navigieren: Melden Sie sich im E-Banking an und wählen Sie den Bereich „Zahlungen“ aus. 2.	Dauerauftrag erfassen: Geben Sie die Zahlung wie gewohnt ein. Aktivieren Sie im Abschnitt „Zeitplan & Weitere Optionen“ die Option „Dauerauftrag“. 3.	Startdatum und Wiederholungsregeln festlegen: Wählen Sie das Startdatum und bestimmen Sie, wie häufig die Zahlung ausgeführt werden soll. Die nächsten sechs Ausführungen werden angezeigt; bei weiteren Wiederholungen läuft der Dauerauftrag automatisch weiter. 4.	Bestätigung: Bestätigen Sie die Eingabe abschliessend wie bei einer normalen Zahlung. Für ausführlichere Informationen steht Ihnen die Hilfeseite der Migros Bank zur Verfügung.  
+
+  **Query:** Wie schaue ich, ob mir jemand Geld überwiesen hat?  
+  **Context:** Um zu überprüfen, ob Ihnen jemand Geld überwiesen hat, können Sie Ihren aktuellen Kontostand und alle Konto-Transaktionen einfach über das Migros Bank E-Banking oder Mobile Banking einsehen. Hier sind die Schritte, die Sie befolgen sollten: Loggen Sie sich in Ihr E-Banking oder Mobile Banking ein: Wählen Sie das entsprechende Konto aus, für das Sie die Transaktionen überprüfen möchten. Überprüfen Sie Ihre Transaktionen: Im Bereich „Zahlungen und Buchungen suchen“ können Sie Ihre Kontoaktivitäten einsehen. Sie können auch nach spezifischen Ein- und Ausgängen filtern, um die gewünschte Überweisung schneller zu finden. Falls Sie noch keinen Zugang zum E-Banking haben, können Sie diesen über das Online-Formular auf der Migros Bank Website beantragen. Alternativ können Sie Ihren Kontostand auch am Bancomat mit Ihrer Debitkarte abfragen oder die Saldo-Hotline der Migros Bank unter 0900 845 445 (CHF 1.50/min) anrufen.  
+  **Response:** So prüfen Sie, ob Ihnen jemand Geld überwiesen hat: 1.	Kontostand und Transaktionen einsehen: Melden Sie sich im Migros Bank E-Banking oder Mobile Banking an und wählen Sie das gewünschte Konto aus. 2.	Transaktionen überprüfen: Im Bereich „Zahlungen und Buchungen suchen“ können Sie alle Kontoaktivitäten einsehen. Nutzen Sie Filterfunktionen, um gezielt nach bestimmten Ein- oder Ausgängen zu suchen. 3.	Alternative Möglichkeiten: •	Bancomat: Überprüfen Sie Ihren Kontostand direkt am Bancomat mit Ihrer Debitkarte. •	Saldo-Hotline: Rufen Sie die Migros Bank Saldo-Hotline unter 0900 845 445 (CHF 1.50/min) an. •	Zugang beantragen: Falls Sie noch keinen E-Banking-Zugang haben, können Sie diesen über das Online-Formular auf der Migros Bank Website beantragen.  
+
+# Data  
+QUERY: {{query}}  
+CONTEXT: {{context}}  
+RESPONSE: {{response}}  
+
+# Tasks  
+## Um eine vollständige Bewertung vorzunehmen, benötige ich die spezifische Antwort (RESPONSE), die Kontextinformationen (CONTEXT) und die ursprüngliche Frage (QUERY). Könntest du mir bitte diese Informationen zur Verfügung stellen, damit ich die Bewertung vornehmen kann?
+- **ThoughtChain**: Um den Denkprozess zu verbessern, denke Schritt für Schritt und füge eine Schritt-für-Schritt-Erklärung deines Denkprozesses hinzu, während du die Daten basierend auf den Definitionen analysierst. Halte es kurz und beginne deine Denk-Kette mit „Lass uns Schritt für Schritt nachdenken:“.
+- **Explanation**: Eine sehr kurze Erklärung, warum ich denke, dass die Eingabedaten diese Bewertung erhalten sollten.
+- **Score**: Um eine Punktzahl zu vergeben, benötige ich die spezifischen Daten (QUERY, CONTEXT und RESPONSE), um die Antwort anhand der vorgegebenen Definitionen zu bewerten. Sobald ich diese Informationen habe, kann ich eine Punktzahl in Form einer Ganzzahl (z. B. “1”, “2” usw.) basierend auf der Qualität der Antwort vergeben.
+
+## Bitte gib deine Antworten zwischen den Tags an: <S0>your chain of thoughts</S0>, <S1>your explanation</S1>, <S2>your Score</S2>.  
+# Output
