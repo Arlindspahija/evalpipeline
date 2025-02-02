@@ -9,5 +9,3 @@ Nutzung:
 	1.	Repository klonen und Abhängigkeiten installieren
 	2.	Umgebungsvariablen einrichten
 	3.	Evaluierung mit evaluation_pipeline.py starten.
-
-Das Projekt unterstützt Anpassungen und lädt zur Mitwirkung ein.
