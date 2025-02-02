@@ -1,4 +1,0 @@
-azure-ai-evaluation==1.0.1
-azure-ai-evaluation[remote]
-python-dotenv
-marshmallow==3.23.1
